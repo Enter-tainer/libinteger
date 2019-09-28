@@ -3,4 +3,4 @@ project(integer)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(integer main.cpp uinteger.cpp uinteger.h)
+add_executable(integer main.cpp basic_uint.cpp basic_uint.h)
