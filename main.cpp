@@ -2,9 +2,10 @@
 #include "basic_uint.h"
 
 using namespace std;
-
+using u200 = mgt::basic_uint<200>;
 int main() {
-  mgt::basic_uint<4> s(3), g(3);
-  cout << (s < g) << endl;
+  u200 a, b;
+  cin >> a >> b;
+  cout << a * b << endl;
   return 0;
 }
