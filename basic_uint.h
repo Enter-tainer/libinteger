@@ -9,34 +9,56 @@
 #include <utility>
 #include <string>
 #include <algorithm>
-
 #include <iostream>
+
 namespace mgt {
+  template<size_t l>
+  size_t get_high_1_index(const std::bitset<l> &bits) { // assume that bits != 0
+    size_t res;
+    for (res = l - 1; res >= 0; --res)
+      if (bits[res])
+        return res;
+  }
   template<size_t l = 1024>
   class basic_uint {
   private:
     std::bitset<l> data;
 
+//    std::pair<basic_uint<l>, basic_uint<l>> basic_div(const basic_uint<l> &s) const { // return <res, mod>
+//      if (*this < s)
+//        return std::make_pair(basic_uint<l>(0), basic_uint<l>(*this));
+//      if (s == basic_uint<l>(0))
+//        throw std::runtime_error("divide by zero");
+//      basic_uint<l> lb(0), rb = (*this) + basic_uint<l>(1), m;
+//      while (lb + basic_uint<l>(1) < rb) {
+//        m = (lb + rb) >> 1;
+//        if (m * s <= *this)
+//          lb = m;
+//        else
+//          rb = m;
+//      }
+//
+//      if (rb * s <= *this)
+//        return std::make_pair(rb, *this - rb * s);
+//      else
+//        return std::make_pair(lb, *this - lb * s);
+//    }
     std::pair<basic_uint<l>, basic_uint<l>> basic_div(const basic_uint<l> &s) const { // return <res, mod>
       if (*this < s)
         return std::make_pair(basic_uint<l>(0), basic_uint<l>(*this));
       if (s == basic_uint<l>(0))
         throw std::runtime_error("divide by zero");
-      basic_uint<l> lb(0), rb = (*this) + basic_uint<l>(1), m;
-      while (lb + basic_uint<l>(1) < rb) {
-        m = (lb + rb) >> 1;
-        if (m * s <= *this)
-          lb = m;
-        else
-          rb = m;
+      int diff = get_high_1_index(this->data) - get_high_1_index(s.data);
+      basic_uint<l> tmp, res, cpy(*this);
+      for (; diff >= 0; --diff) {
+        tmp = s << diff;
+        if (tmp <= cpy) {
+          res.data[diff] = 1;
+          cpy -= tmp;
+        }
       }
-
-      if (rb * s <= *this)
-        return std::make_pair(rb, *this - rb * s);
-      else
-        return std::make_pair(lb, *this - lb * s);
+      return std::make_pair(res, cpy);
     }
-
     std::bitset<l> basic_from_string(std::string str) {
       std::bitset<l> tmp;
       size_t end = str.length() - 1;
@@ -94,6 +116,9 @@ namespace mgt {
       std::string res;
       std::bitset<8> tmp;
       basic_uint<l> cpy = *this;
+      if (!cpy.data.any()) {
+        return "0";
+      }
       while (cpy.data.any()) {
         auto s = cpy.basic_div(basic_uint<l>(10));
         for (size_t i = 0; i < 8; ++i)
@@ -125,12 +150,10 @@ namespace mgt {
     }
 
     friend bool operator<(const basic_uint<l> &a, const basic_uint<l> &b) {
-      for (int i = l; i >= 0; --i) {
+      for (int i = l - 1; i >= 0; --i) {
         if (a.data[i] < b.data[i])
           return true;
-        else if (a.data[i] == b.data[i])
-          continue;
-        else
+        if (a.data[i] > b.data[i])
           return false;
       }
       return false;
