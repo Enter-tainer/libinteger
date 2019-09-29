@@ -3,10 +3,12 @@
 #include "u.h"
 
 using namespace std;
+using i32 = mgt::i<32>;
 
 int main() {
-  mgt::i<13300> a, b;
+  i32 a, b;
   cin >> a >> b;
   cout << a + b << endl;
+
   return 0;
 }

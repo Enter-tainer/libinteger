@@ -17,7 +17,7 @@ namespace mgt {
 
     i(const i<l> &s) { this->data = s.data; }
 
-    explicit i(const basic_uint<l> &num) : basic_uint<l>(num) {}
+    i(const basic_uint<l> &num) : basic_uint<l>(num) {}
 
     explicit i(long long s) {
       if (s >= 0)
