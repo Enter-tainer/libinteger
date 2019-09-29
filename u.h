@@ -29,17 +29,17 @@ namespace mgt {
       this->from_string(str);
     }
 
-		u<l>& operator=(const std::string str) {
-			if(str[0] == '-')
-				abort();
-			*this = u<l>(str);
-			return *this;
-		}
+    u<l>& operator=(const std::string str) {
+      if(str[0] == '-')
+        throw std::runtime_error();
+      *this = u<l>(str);
+      return *this;
+    }
 
-		u<l> &operator=(const unsigned long long s) {
-			*this = u<l>(s);
-			return *this;
-		}
+    u<l> &operator=(const unsigned long long s) {
+      *this = u<l>(s);
+      return *this;
+    }
 
   };
 
