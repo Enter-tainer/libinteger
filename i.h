@@ -102,11 +102,12 @@ namespace mgt {
       d.from_string(res);
       return in;
     }
+
+    friend bool is_neg(const i<l> &num) {
+      return num.data[l - 1];
+    }
   };
 
-  template<size_t l>
-  bool is_neg(const i<l> &num) {
-    return num.data[l - 1];
-  }
+
 }
 #endif //INTEGER_I_H

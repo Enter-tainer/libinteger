@@ -8,7 +8,7 @@ using i32 = mgt::i<32>;
 int main() {
   i32 a, b;
   cin >> a >> b;
-  cout << a + b << endl;
+  cout << (a < b) << endl;
 
   return 0;
 }
