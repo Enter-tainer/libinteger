@@ -56,7 +56,7 @@ namespace mgt {
         return this->basic_to_string(*this);
     }
 		
-		i<l> &operator=(const long long s) {
+    i<l> &operator=(const long long s) {
       *this = i<l>(s);
       return *this;
     }
