@@ -8,6 +8,7 @@
 #include <bitset>
 #include <utility>
 #include <string>
+#include <cmath>
 #include <algorithm>
 #include <iostream>
 
@@ -21,37 +22,16 @@ namespace mgt {
   }
   template<size_t l = 1024>
   class basic_uint {
-  private:
+  protected:
     std::bitset<l> data;
-
-//    std::pair<basic_uint<l>, basic_uint<l>> basic_div(const basic_uint<l> &s) const { // return <res, mod>
-//      if (*this < s)
-//        return std::make_pair(basic_uint<l>(0), basic_uint<l>(*this));
-//      if (s == basic_uint<l>(0))
-//        throw std::runtime_error("divide by zero");
-//      basic_uint<l> lb(0), rb = (*this) + basic_uint<l>(1), m;
-//      while (lb + basic_uint<l>(1) < rb) {
-//        m = (lb + rb) >> 1;
-//        if (m * s <= *this)
-//          lb = m;
-//        else
-//          rb = m;
-//      }
-//
-//      if (rb * s <= *this)
-//        return std::make_pair(rb, *this - rb * s);
-//      else
-//        return std::make_pair(lb, *this - lb * s);
-//    }
     std::pair<basic_uint<l>, basic_uint<l>> basic_div(const basic_uint<l> &s) const { // return <res, mod>
       if (*this < s)
         return std::make_pair(basic_uint<l>(0), basic_uint<l>(*this));
       if (s == basic_uint<l>(0))
         throw std::runtime_error("divide by zero");
       int diff = get_high_1_index(this->data) - get_high_1_index(s.data);
-      basic_uint<l> tmp, res, cpy(*this);
-      for (; diff >= 0; --diff) {
-        tmp = s << diff;
+      basic_uint<l> tmp = s << diff, res, cpy(*this);
+      for (; diff >= 0; --diff, tmp >>= 1) {
         if (tmp <= cpy) {
           res.data[diff] = 1;
           cpy -= tmp;
@@ -59,6 +39,7 @@ namespace mgt {
       }
       return std::make_pair(res, cpy);
     }
+
     std::bitset<l> basic_from_string(std::string str) {
       std::bitset<l> tmp;
       size_t end = str.length() - 1;
@@ -73,6 +54,69 @@ namespace mgt {
         }
       }
       return tmp;
+    }
+
+    template<size_t s>
+    uint8_t get_bcd_from_index(const std::bitset<s> &num, size_t idx) const { // idx, idx + 1, .. idx + 3
+      uint8_t res = 0, tmp = 1;
+      res += num[idx] ? tmp : 0;
+      tmp <<= 1u;
+      res += num[idx + 1] ? tmp : 0;
+      tmp <<= 1u;
+      res += num[idx + 2] ? tmp : 0;
+      tmp <<= 1u;
+      res += num[idx + 3] ? tmp : 0;
+      return res;
+    }
+
+    template<size_t s>
+    void add_3_to_index(std::bitset<s> &num, size_t idx) const {
+      size_t inc = 0, tmp;
+      std::bitset<4> three(3);
+      for (size_t i = 0; i < 4; ++i) {
+        tmp = num[i + idx];
+        num[i + idx] = tmp ^ inc ^ three[i];
+        inc = (tmp + inc + three[i]) >= 2 ? 1 : 0;
+      }
+    }
+
+    template<size_t s>
+    uint8_t read_bcd_from_index(const std::bitset<s> &num, size_t idx) const {
+      uint8_t res = 0, tmp = 1;
+      for (size_t i = idx; i < idx + 4; ++i) {
+        if (num[i])
+          res += tmp;
+        tmp <<= 1u;
+      }
+      return res;
+    }
+
+    std::string basic_to_string(const basic_uint<l> &num) const { // Double_dabble
+      std::bitset<3 * l> opt;
+      for (size_t i = 0; i < l; ++i)
+        opt[i] = num.data[i];
+      for (size_t k = 0; k < l; ++k) {
+        for (size_t i = l; i < k + l; i += 4) {
+          if (get_bcd_from_index(opt, i) >= 5) {
+            add_3_to_index(opt, i);
+          }
+        }
+        opt <<= 1;
+      }
+      std::string res, tmp_str;
+      for (size_t i = l; i < 3 * l; i += 4) {
+        char c = '0' + read_bcd_from_index(opt, i);
+        if (c == '0')
+          tmp_str += '0';
+        else {
+          res += tmp_str + c;
+          tmp_str = "";
+        }
+      }
+      std::reverse(res.begin(), res.end());
+      if (res.empty())
+        res = "0";
+      return res;
     }
 
     void dev_by_2(std::string &str) {
@@ -90,6 +134,21 @@ namespace mgt {
       }
     }
   public:
+    std::string to_binary_string() {
+      return data.to_string();
+    }
+
+    unsigned long long to_ull() {
+      return data.to_ullong();
+    }
+
+    [[nodiscard]] virtual std::string to_string() const {
+      return basic_to_string(*this);
+    }
+
+    virtual void from_string(const std::string &str) {
+      this->data = basic_from_string(str);
+    }
     basic_uint() {
       data = 0;
     }
@@ -104,34 +163,8 @@ namespace mgt {
       data = s;
     }
 
-    std::string to_binary_string() {
-      return data.to_string();
-    }
-
-    unsigned long long to_ull() {
-      return data.to_ullong();
-    }
-
-    [[nodiscard]] virtual std::string to_string() const {
-      std::string res;
-      std::bitset<8> tmp;
-      basic_uint<l> cpy = *this;
-      if (!cpy.data.any()) {
-        return "0";
-      }
-      while (cpy.data.any()) {
-        auto s = cpy.basic_div(basic_uint<l>(10));
-        for (size_t i = 0; i < 8; ++i)
-          tmp[i] = s.second.data[i];
-        res += static_cast<char>('0' + tmp.to_ulong());
-        cpy.data = s.first.data;
-      }
-      std::reverse(res.begin(), res.end());
-      return res;
-    }
-
-    virtual void from_string(const std::string &str) {
-      this->data = basic_from_string(str);
+    explicit basic_uint(std::string str) {
+      this->from_string(str);
     }
 
     friend std::ostream &operator<<(std::ostream &out, const basic_uint<l> &d) {
@@ -225,13 +258,11 @@ namespace mgt {
     }
 
     friend basic_uint<l> operator+(const basic_uint<l> &a, const basic_uint<l> &b) {
-      basic_uint<l> res, inc, tmp;
-      res = a ^ b;
-      inc = ((a & b) << 1);
-      while (inc.data.any()) {
-        tmp = res;
-        res ^= inc;
-        inc = (inc & tmp) << 1;
+      basic_uint<l> res;
+      uint8_t inc = 0;
+      for (size_t i = 0; i < l; ++i) {
+        res.data[i] = a.data[i] ^ b.data[i] ^ inc;
+        inc = (a.data[i] + b.data[i] + inc) >= 2 ? 1 : 0;
       }
       return res;
     }

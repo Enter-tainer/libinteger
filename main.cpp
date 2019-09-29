@@ -1,10 +1,12 @@
 #include <iostream>
-#include "basic_uint.h"
+#include "i.h"
+#include "u.h"
 
 using namespace std;
-using u512 = mgt::basic_uint<1024>;
+
 int main() {
-  u512 a(1), b(2);
+  mgt::i<13300> a, b;
+  cin >> a >> b;
   cout << a + b << endl;
   return 0;
 }
