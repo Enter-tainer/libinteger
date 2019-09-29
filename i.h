@@ -55,6 +55,16 @@ namespace mgt {
       else
         return this->basic_to_string(*this);
     }
+		
+    i<l> &operator=(const long long s) {
+      *this = i<l>(s);
+      return *this;
+    }
+
+    i<l> &operator=(const std::string str) {
+      *this = i<l>(str);
+      return *this;
+    }
 
     friend i<l> operator+(const i<l> &a, const i<l> &b) {
       return i<l>((basic_uint<l>) a + (basic_uint<l>) b);

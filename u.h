@@ -28,6 +28,19 @@ namespace mgt {
     explicit u(std::string str) {
       this->from_string(str);
     }
+
+    u<l>& operator=(const std::string str) {
+      if(str[0] == '-')
+        throw std::runtime_error();
+      *this = u<l>(str);
+      return *this;
+    }
+
+    u<l> &operator=(const unsigned long long s) {
+      *this = u<l>(s);
+      return *this;
+    }
+
   };
 
 }
