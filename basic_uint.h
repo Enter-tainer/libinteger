@@ -20,10 +20,12 @@ namespace mgt {
       if (bits[res])
         return res;
   }
+
   template<size_t l = 1024>
   class basic_uint {
   protected:
     std::bitset<l> data;
+
     std::pair<basic_uint<l>, basic_uint<l>> basic_div(const basic_uint<l> &s) const { // return <res, mod>
       if (*this < s)
         return std::make_pair(basic_uint<l>(0), basic_uint<l>(*this));
@@ -133,6 +135,7 @@ namespace mgt {
         str[i] = current_num / 2 + '0';
       }
     }
+
   public:
     std::string to_binary_string() {
       return data.to_string();
@@ -149,6 +152,7 @@ namespace mgt {
     virtual void from_string(const std::string &str) {
       this->data = basic_from_string(str);
     }
+
     basic_uint() {
       data = 0;
     }
