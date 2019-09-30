@@ -135,7 +135,18 @@ namespace mgt {
         str[i] = current_num / 2 + '0';
       }
     }
-
+/*  
+    char to_hex(int number) {
+      if (number <= 9)
+        return ('0' + number);
+      else
+        return 'a' + number - 10;
+    }    
+    
+    void hex_plus(std::string &result, const std::string &a, const std::string &b) {
+      
+    }
+*/
   public:
     std::string to_binary_string() {
       return data.to_string();
@@ -286,11 +297,60 @@ namespace mgt {
     }
 
     friend basic_uint<l> operator*(const basic_uint<l> &a, const basic_uint<l> &b) {
+      /*
       basic_uint<l> res, tmp = b;
       for (size_t i = 0; i < l; ++i, tmp <<= 1) {
         if (a.data[i])
           res += tmp;
       }
+      return res;
+      */
+      // int times = l / 4;
+      basic_uint<l> res(0);
+      int current_numa , current_numb , buff = 0;
+      int temp_res;
+      std::string stra , strb;
+      size_t i;
+      for (i = 0; i < l - 5; i += 4) {
+        current_numa = current_numb = 0;
+        for (size_t j = i; j < i + 4; ++j) {
+          if (a.data[j])
+            current_numa += std::pow(2, j - i);
+          if (b.data[j])
+            current_numb += std::pow(2, j - i);
+        }
+        stra.push_back(current_numa);
+        strb.push_back(current_numb);
+      }
+      i -= 4;
+      current_numa = current_numb = 0;
+      for (size_t j = i; j < l; ++j)
+      {
+        if (a.data[j])
+          current_numa += std::pow(2, j - i);
+        if (b.data[j])
+          current_numb += std::pow(2, j - i);
+      }
+      stra.push_back(current_numa);
+      strb.push_back(current_numb);
+      int length = stra.length();
+
+      std::string strres(2 * length, 0);
+      for (size_t k = 0; k < length; ++k) {
+        for (size_t m = 0; m < length; ++m) {
+          strres[k + m] += stra[k] * strb[m];
+          strres[k + m + 1] += strres[k + m] / 16;
+          strres[k + m] %= 16;
+        }
+      }
+
+      for (size_t k = 0; k < 2 * length; ++k) {
+        for (size_t m = 4 * k; m < 4 * k + 4; ++m) {
+          res.data[m] = strres[k] % 2;
+          strres[k] /= 2;
+        }
+      }
+      
       return res;
     }
 
