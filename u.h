@@ -16,6 +16,7 @@ namespace mgt {
     }
 
     u(const u<l> &s) { this->data = s.data; }
+    u(const basic_uint<l> &num) : basic_uint<l>(num) {}
 
     explicit u(unsigned long long s) {
       this->data = std::bitset<l>(s);
