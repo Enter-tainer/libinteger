@@ -11,7 +11,7 @@ using namespace std;
 using i1024 = mgt::i<1024>;
 using u1024 = mgt::u<1024>;
 int main() {
-  i32 a, b;
+  i1024 a, b;
   cin >> a >> b;
   cout << a + b << endl;
 
