@@ -7,11 +7,20 @@ using i32 = mgt::i<32>;
 using u32 = mgt::u<32>;
 
 int main() {
-  u32 a, b;
-  a = 1;
-  b = 1;
-  u32 c;
-  c = a + b;
-  cout << c << endl;
+  i32 a, b;
+  bool flag = true;
+  for (int i = -1000; i <= 1e3; ++i) {
+    for (int j = i; j <= 1e3; ++j) {
+      a = i, b = j;
+      if (a * b != i32(i * j)) {
+        cout << "Error when i = " << i << ", j = " << j << ", expected " << i32(i * j) << ", got " << a * b << ". "
+             << endl;
+        flag = false;
+      }
+    }
+  }
+  if (flag)
+    cout << "All tests passed, no error found" << endl;
+
   return 0;
 }
