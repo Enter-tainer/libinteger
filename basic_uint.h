@@ -137,6 +137,14 @@ namespace mgt {
       }
     }
 
+    static int pow_2(int times) {
+      int res = 1;
+      for (int i = 0; i < times; ++i) {
+        res *= 2;
+      }
+      return res;
+    }
+
   public:
     std::string to_binary_string() {
       return data.to_string();
@@ -289,16 +297,17 @@ namespace mgt {
     friend basic_uint<l> operator*(const basic_uint<l> &a, const basic_uint<l> &b) {
       basic_uint<l> res(0);
       int current_numa, current_numb;
-      int temp_res;
       std::vector<int> hexa, hexb;
+      hexa.reserve(l / 4 + 1);
+      hexa.reserve(l / 4 + 1);
       size_t i;
       for (i = 0; i < l - 5; i += 4) {
         current_numa = current_numb = 0;
         for (size_t j = i; j < i + 4; ++j) {
           if (a.data[j])
-            current_numa += std::pow(2, j - i);
+            current_numa += pow_2(j - i);
           if (b.data[j])
-            current_numb += std::pow(2, j - i);
+            current_numb += pow_2(j - i);
         }
         hexa.push_back(current_numa);
         hexb.push_back(current_numb);
@@ -307,9 +316,9 @@ namespace mgt {
       current_numa = current_numb = 0;
       for (size_t j = i; j < l; ++j) {
         if (a.data[j])
-          current_numa += std::pow(2, j - i);
+          current_numa += pow_2(j - i);
         if (b.data[j])
-          current_numb += std::pow(2, j - i);
+          current_numb += pow_2(j - i);
       }
       hexa.push_back(current_numa);
       hexb.push_back(current_numb);
