@@ -136,18 +136,7 @@ namespace mgt {
         str[i] = current_num / 2 + '0';
       }
     }
-/*  
-    char to_hex(int number) {
-      if (number <= 9)
-        return ('0' + number);
-      else
-        return 'a' + number - 10;
-    }    
-    
-    void hex_plus(std::string &result, const std::string &a, const std::string &b) {
-      
-    }
-*/
+
   public:
     std::string to_binary_string() {
       return data.to_string();
