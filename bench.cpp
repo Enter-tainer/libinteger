@@ -22,6 +22,8 @@ string get_rand_num() {
 int main() {
   {
     i1024 a(get_rand_num()), b(get_rand_num());
+    if (a <= b)
+      swap(a, b);
     cout << "ms / op: test on i1024" << endl;
     auto start = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < 1000; ++i)
@@ -42,10 +44,10 @@ int main() {
     cout << "multiply:" << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 100.0 << endl;
 
     start = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < 100; ++i)
+    for (int i = 0; i < 1000; ++i)
       a / b;
     end = std::chrono::high_resolution_clock::now();
-    cout << "division:" << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 100.0 << endl;
+    cout << "division:" << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.0 << endl;
 
     start = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < 100; ++i)
@@ -57,6 +59,8 @@ int main() {
   //=================================================================================================================
   {
     u1024 a(get_rand_num()), b(get_rand_num());
+    if (a <= b)
+      swap(a, b);
     cout << "ms / op: test on u1024" << endl;
     auto start = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < 1000; ++i)
@@ -77,10 +81,10 @@ int main() {
     cout << "multiply:" << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 100.0 << endl;
 
     start = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < 100; ++i)
+    for (int i = 0; i < 1000; ++i)
       a / b;
     end = std::chrono::high_resolution_clock::now();
-    cout << "division:" << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 100.0 << endl;
+    cout << "division:" << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.0 << endl;
 
     start = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < 100; ++i)
