@@ -11,6 +11,7 @@
 #include <cmath>
 #include <algorithm>
 #include <iostream>
+#include <vector>
 
 namespace mgt {
   template<size_t l>
@@ -134,6 +135,14 @@ namespace mgt {
           buff = 0;
         str[i] = current_num / 2 + '0';
       }
+    }
+
+    static int pow_2(int times) {
+      int res = 1;
+      for (int i = 0; i < times; ++i) {
+        res *= 2;
+      }
+      return res;
     }
 
   public:
@@ -286,11 +295,52 @@ namespace mgt {
     }
 
     friend basic_uint<l> operator*(const basic_uint<l> &a, const basic_uint<l> &b) {
-      basic_uint<l> res, tmp = b;
-      for (size_t i = 0; i < l; ++i, tmp <<= 1) {
-        if (a.data[i])
-          res += tmp;
+      basic_uint<l> res(0);
+      int current_numa, current_numb;
+      std::vector<int> hexa, hexb;
+      hexa.reserve(l / 4 + 1);
+      hexa.reserve(l / 4 + 1);
+      size_t i;
+      for (i = 0; i < l - 5; i += 4) {
+        current_numa = current_numb = 0;
+        for (size_t j = i; j < i + 4; ++j) {
+          if (a.data[j])
+            current_numa += pow_2(j - i);
+          if (b.data[j])
+            current_numb += pow_2(j - i);
+        }
+        hexa.push_back(current_numa);
+        hexb.push_back(current_numb);
       }
+      i -= 4;
+      current_numa = current_numb = 0;
+      for (size_t j = i; j < l; ++j) {
+        if (a.data[j])
+          current_numa += pow_2(j - i);
+        if (b.data[j])
+          current_numb += pow_2(j - i);
+      }
+      hexa.push_back(current_numa);
+      hexb.push_back(current_numb);
+      int length = hexa.size();
+
+      std::vector<int> hexres(2 * length, 0);
+
+      for (size_t k = 0; k < length; ++k) {
+        for (size_t m = 0; m < length; ++m) {
+          hexres[k + m] += hexa[k] * hexb[m];
+          hexres[k + m + 1] += hexres[k + m] / 16;
+          hexres[k + m] %= 16;
+        }
+      }
+
+      for (size_t k = 0; k < 2 * length; ++k) {
+        for (size_t m = 4 * k; m < 4 * k + 4 && m < l; ++m) {
+          res.data[m] = hexres[k] % 2;
+          hexres[k] /= 2;
+        }
+      }
+
       return res;
     }
 
