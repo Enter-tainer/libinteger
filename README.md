@@ -19,24 +19,24 @@ int main() {
 }
 ```
 
-## Performance
+## Performance(With -O2)
 
 ```
 ms / op: test on i1024
-plus:0.094
-minus:0.176
-multiply:43.74
-division:0.53
-to_string:33.35
+plus:0.003
+minus:0.005
+multiply:0.16
+division:0
+to_string:2.01
 
 ====================================================
 
 ms / op: test on u1024
-plus:0.088
-minus:0.176
-multiply:43.08
+plus:0.002
+minus:0.004
+multiply:0.18
 division:0
-to_string:33.01
+to_string:2.02
 ```
 
 See bench.cpp for details
